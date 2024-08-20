@@ -9,6 +9,18 @@ $$*TODO* Add some general description about the software$$
 ## Installation
 $$*TODO* Write instructions on how to install the software and prepare the testing environment$$
 
+# Cucumber environment
+1.check the driver version:
+   a.open Selenium folder with a Command Promt.
+   b.run chromdriver.exe --version. you will see version number such as 128.0.6613.36 
+2.download chrome browser for testing:
+   a.go to https://googlechromelabs.github.io/chrome-for-testing/ 
+   b.search for the Chrome Binary for your driver version and dowload it by coppying the URL.
+   c.extract the folder content
+   d.add the chrome-win64 folder inside the /Selenium/chrome-browser/ folder
+   e.you chould have this folder tree now: ../Selenium/chrome-browser/chrome-win64/chrome.exe"
+   **you can change and replace the driver and browser versions but keep it same for the pair.
+
 ![image](https://github.com/user-attachments/assets/e9b64ff2-780c-4d8d-9912-66fb08172b94)
 
 
