@@ -2,14 +2,14 @@
 This is a repository for the system-testing assignment of the Software Quality Engineering course at the [Ben-Gurion University](https://in.bgu.ac.il/), Israel.
 
 ## Assignment Description
-In this assignment, we tested an open-source software called [$$*TODO* software name$$](https://address-of-the-project.com).
+In this assignment, we tested an open-source software called [$$OpenCart$$](https://www.opencart.com/).
 
 $$*TODO* Add some general description about the software$$
 
 ## Installation
 $$*TODO* Write instructions on how to install the software and prepare the testing environment$$
 
-# Cucumber environment
+### Cucumber environment
 1.check the driver version:
    a.open Selenium folder with a Command Promt.
    b.run chromdriver.exe --version. you will see version number such as 128.0.6613.36 
