@@ -20,6 +20,33 @@ const XPATHS = {
     searchButton: "//*[@id='search']/button[1]",
     addToCartTestProduct: "//*[@id='product-list']/div/div/div/form/div/button[1]",
 
+    shoppingCart: "//*[@id='top']/div[1]/div[2]/ul[1]/li[4]/a[1]/span[1]",
+    shoppingCart2: "//*[@id='header-cart']/div/button[1]",
+    checkout: "//*[@id='content']/div[3]/div[2]/a[1]",
+    checkout2: "//*[@id='header-cart']/div[1]/ul[1]/li[1]/div[1]/p[1]/a[2]/strong[1]",
+    checkoutName: "//*[@id='form-shipping-address']/div[1]/div[1]/input[1]",
+    checkoutPostCode: "//*[@id='form-shipping-address']/div[1]/div[7]/input[1]",
+    checkoutState: "//*[@id='form-shipping-address']/div[1]/div[9]/select[1]",
+    checkoutLAstname: "//*[@id='form-shipping-address']/div[1]/div[2]/input[1]",
+    checkoutAdress: "//*[@id='form-shipping-address']/div[1]/div[4]/input[1]",
+    checkoutCity: "//*[@id='form-shipping-address']/div[1]/div[6]/input[1]",
+    checkoutCountrybar: "//*[@id='form-shipping-address']/div[1]/div[8]/select[1]",
+
+    chooseAddress: "//*[@id='shipping-existing']/select[1]",
+    chooseTestAdress: "//select[@name='address_id']/option[text()='a a, aaa, aa, Harbour Island, Bahamas']",
+
+    shipping: "//*[@id='button-shipping-methods']",
+    shippingcheckbox: "//*[@id='form-shipping-method']/div/input[1]",
+    shippingContinue: "//*[@id='form-shipping-method']/div/button[1]",
+
+    paymentMethod: "//*[@id='button-payment-methods']",
+    paymentCheckbox: "//*[@id='form-payment-method']/div/input[1]",
+    paymentContinue: "//*[@id='form-payment-method']/div/button[1]",
+    confirmOrder: "//*[@id='checkout-payment']/div[1]/button[1]",
+    confirmationMsg: "//*[@id='content']/h1[1]",
+    
+
+
     adminLoginUsernameInput: "//*[@id='input-username']",
     adminLoginPasswordInput: "//*[@id='input-password']",
     adminLoginButton: "//button[@type='submit']",
