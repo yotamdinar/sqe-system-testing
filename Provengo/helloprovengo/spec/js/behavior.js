@@ -1,109 +1,52 @@
+
 // @provengo summon ctrl
 // @provengo summon constraints
 // @provengo summon selenium
 
 
-const mainPage = "http://localhost/opencartsite"
-const SESSION = "customer-session"
 
-const XPATHS = {
-    myAccount: "//*[@id='top']/div[1]/div[2]/ul[1]/li[2]/div[1]/a[1]/span[1]",
-    login: "//*[@id='top']/div[1]/div[2]/ul[1]/li[2]/div[1]/ul[1]/li[2]/a[1]",
-    loginEmailInput: "//*[@id='form-login']/div[1]/input[1]",
-    loginPasswordInput: "//*[@id='form-login']/div[2]/input[1]",
-    loginButton: "//*[@id='form-login']/div[3]/button[1]",
-    searchWindow: "//*[@id='search']/input[1]",
-    searchButton: "//*[@id='search']/button[1]",
-    macImg: "//*[@id='product-list']/div[1]/div[1]/div[1]/a[1]/img[1]",
-    addToCartMacBook: "//*[@id='form-product']/div[1]/button[1]",
-}
-
-user = {
-    email: 'dinaryo@post.bgu.ac.il',
-    password: '1111'
-}
-
-product = {
-    name: 'iMac'
-}
-
-productSerach = "mac"
-
-function sleepEkSec() {
-    Ctrl.doSleep(100)
-}
-
-bthread('login', function () {
-    with (new SeleniumSession(SESSION).start(mainPage)) {
-        //login
-        sync({ request: Event("Begin(login)") }); sleepEkSec()
-        click(XPATHS.myAccount); sleepEkSec()
-        click(XPATHS.login); sleepEkSec()
-        waitForVisibility(XPATHS.loginEmailInput)
-        writeText(XPATHS.loginEmailInput, user.email); sleepEkSec()    
-        waitForVisibility(XPATHS.loginPasswordInput)
-        writeText(XPATHS.loginPasswordInput, user.password); sleepEkSec()
-        click(XPATHS.loginButton); sleepEkSec();sleepEkSec();sleepEkSec()
-
-        //search
-        waitForVisibility(XPATHS.searchWindow)
-        writeText(XPATHS.searchWindow, productSerach) ;sleepEkSec()
-        click(XPATHS.searchButton); sleepEkSec(); sleepEkSec();
-
-        //add to cart
-        waitForVisibility(XPATHS.macImg)
-        click(XPATHS.macImg); sleepEkSec();sleepEkSec()
-        waitForVisibility(XPATHS.addToCartMacBook)
-        click(XPATHS.addToCartMacBook); sleepEkSec();sleepEkSec()
-
-        // switchFrame('//iframe[contains(@id,"framelive")]')
-        //waitForVisibility('//img[contains(@src,"logo")]', 50000)
-        // click('//span[contains(.,"Sign in")]')
-        // writeText('//input[@id="field-email"]', user.email)
-        // writeText('//input[@id="field-password"]', user.password)
-        
-
-        // sync({ request: Event("End(login)") })
-    }
-})
-
-// bthread("add to cart", function () {
-//     with (new SeleniumSession(SESSION).start(URL)) {
-//         sync({ request: Event("Begin(addToCart)") })
-
-//         writeText('//input[@name="s"]', product.name + '\n')
-//         click('(//div[@id="js-product-list"]//a)[1]')
-//         click('//button[@data-button-action="add-to-cart"]')
-//         click('//div[h4[contains(text(),"Product successfully added to your shopping cart")]]/button')
-
-//         sync({ request: Event("End(addToCart)") })
 //     }
 // })
 
-// bthread('Add do card cannot start before login ends to cart', function () {
-//     // Your code goes here
-// })
+bthread("setUp-admin add test product", function() {
+    let s = new SeleniumSession(setupSession).start(adminPage)
+    adminAddProduct(s, admin)
+    // let s2 = new SeleniumSession(AdminSession).start(adminPage);
+    // adminDeleteProduct(s2, admin)
+    let s3 = new SeleniumSession(customerSession).start(mainPage)
+    customerAddProductToCart(s3, customer)
+})
+
+bthread("Admin deletes product", function() {
+    // let s = new SeleniumSession(AdminSession).start(adminPage);
+    // adminDeleteProduct(s, admin)
+
+    // with(new SeleniumSession(AdminSession).start(adminPage)){
+        // sync( {request: Event("Begin(Admin deletes product")})
+        // for (let i=1; i<5;i++)sleepEkSec()
+        // waitForVisibility(XPATHS.adminLoginUsernameInput)
+        // writeText(XPATHS.adminLoginUsernameInput, admin.username); sleepEkSec()    
+        // waitForVisibility(XPATHS.adminLoginPasswordInput)
+        // writeText(XPATHS.adminLoginPasswordInput, admin.password); sleepEkSec()
+        // click(XPATHS.adminLoginButton); sleepEkSec();sleepEkSec();sleepEkSec()
+
+        // //enter products page
+        // waitForVisibility(XPATHS.adminCatalogMenu)
+        // click(XPATHS.adminCatalogMenu); sleepEkSec(); sleepEkSec();
+        // waitForVisibility(XPATHS.adminProducts)
+        // click(XPATHS.adminProducts); sleepEkSec(); sleepEkSec();
+
+        //choose a product
+//         writeText(XPATHS.searchWindow, productSerach) ;sleepEkSec()
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// //         //add to cart
+// //         waitForVisibility(XPATHS.macImg)
+// //         click(XPATHS.macImg); sleepEkSec();sleepEkSec()
+// //         waitForVisibility(XPATHS.addToCartMacBook)
+// //         click(XPATHS.addToCartMacBook); sleepEkSec();sleepEkSec()
+    }
+)
 
 
 /**
@@ -152,15 +95,3 @@ bthread('login', function () {
 //     .block(choiceEvent("Venus"))
 //     .forever();
 
-
-
-
-
-// /**
-//  * This story opens a new browser window, goes to google.com, and searches for "Pasta" using the "I Feel Lucky" feature.
-//  */
-// bthread('Feeling lucky', function () {
-//   let s = new SeleniumSession('lucky').start(URL)
-//   composeQuery(s, { text: 'Pasta' })
-//   feelLucky(s)
-// })
