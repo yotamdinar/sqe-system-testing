@@ -7,6 +7,7 @@
 const mainPage = "http://localhost/opencartsite"
 const adminPage = "http://localhost/opencartsite/yotam"
 const customerSession = "customer-session"
+const customerSession2 = "customer-session2"
 const AdminSession = "admin-session"
 const setupSession = "setup-session"
 
@@ -18,8 +19,8 @@ const XPATHS = {
     loginButton: "//*[@id='form-login']/div[3]/button[1]",
     searchWindow: "//*[@id='search']/input[1]",
     searchButton: "//*[@id='search']/button[1]",
-    addToCartTestProduct: "//*[@id='product-list']/div/div/div/form/div/button[1]",
-
+    addToCartTestProduct2: "//*[@id='product-list']/div/div/div/form/div/button[1]",
+    addToCartTestProduct1: "//*[@id='product-list']/div[1]/div[1]/div[2]/form[1]/div[1]/button[1]",           
     shoppingCart: "//*[@id='top']/div[1]/div[2]/ul[1]/li[4]/a[1]/span[1]",
     shoppingCart2: "//*[@id='header-cart']/div/button[1]",
     checkout: "//*[@id='content']/div[3]/div[2]/a[1]",
@@ -42,7 +43,8 @@ const XPATHS = {
     paymentMethod: "//*[@id='button-payment-methods']",
     paymentCheckbox: "//*[@id='form-payment-method']/div/input[1]",
     paymentContinue: "//*[@id='form-payment-method']/div/button[1]",
-    confirmOrder: "//*[@id='checkout-payment']/div[1]/button[1]",
+    confirmOrder1: "//*[@id='checkout-payment']/div/button[1]",
+    confirmOrder2: "//*[@id='checkout-payment']/div[1]/button[1]",
     confirmationMsg: "//*[@id='content']/h1[1]",
     
 
