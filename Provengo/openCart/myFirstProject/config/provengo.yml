@@ -1,0 +1,2 @@
+version: 2
+rest-api.ssl.validation: false
