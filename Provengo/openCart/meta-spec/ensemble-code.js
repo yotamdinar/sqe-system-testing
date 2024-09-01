@@ -4,14 +4,16 @@
  * List of events "of interest" that we want test suites to cover.
  */
 const GOALS = [
-    any(/checkout/),
-    Ctrl.markEvent("Classic!")
+    Ctrl.markEvent("deleteAt2"),
+    Ctrl.markEvent("deleteAt3"),
+    Ctrl.markEvent("deleteAt4"),
+    Ctrl.markEvent("deleteAt5"),
+    Ctrl.markEvent("deleteAt6"),
+
 ];
 
 const makeGoals = function(){
-    return [ [ any(/Howdy/), any(/Venus/) ],
-             [ any(/Mars/) ],
-             [ Ctrl.markEvent("Classic!") ] ];
+    return [ GOALS ]
 }
 
 /**

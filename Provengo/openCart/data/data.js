@@ -7,7 +7,8 @@
 const mainPage = "http://localhost/opencartsite"
 const adminPage = "http://localhost/opencartsite/yotam"
 const customerSession = "customer-session"
-const customerSession2 = "customer-session2"
+const customerChcekout = "customer-chcekout"
+const customerChcekoutEmpty = "customerChcekoutEmpty"
 const AdminSession = "admin-session"
 const setupSession = "setup-session"
 
@@ -73,6 +74,7 @@ const XPATHS = {
     adminFilter: "//*[@id='filter-product']/div/div/div/button[1]",
     adminTestProductChecbox: "//*[@id='form-product']/div/table/tbody/tr/td/input[1]",
 
+    noSearchResultAdmin: "//*[@id='form-product']/div/table/tbody/tr/td[1]"
     
     
 }

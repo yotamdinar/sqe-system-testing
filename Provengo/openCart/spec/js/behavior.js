@@ -1,71 +1,77 @@
-
 // @provengo summon ctrl
 // @provengo summon constraints
 // @provengo summon selenium
 
-// Shared object to store the sessions
-
-// A single bthread to initialize all SeleniumSession instances
-// bthread("Initialize Sessions", function() {
-//     sessions = startAllSessions()
-//     sync({request: Event('sessionsInitialized')}); // Indicate that sessions are initialized
-// });
-
+/**
+This set-up story opens a new browser window, goes to openCart admin site, logging in, and add a new product for testings.
+*/
 bthread('setUp-admin add test product', function() {
     let s1 = new SeleniumSession(setupSession).start(adminPage)
-    //s1.adminAddProduct(admin)
     adminAddProduct(s1, admin)
     sync({request: Event('end setup')})
 })
 
+/**
+ * this story opens a new browser window,logging in, search for the test product and adds it to the shopping cart.
+ */
 bthread("Customer adds product to cart", function() {
     let s3 = new SeleniumSession(customerSession).start(mainPage)
     sync({request: Event('customerAddProductToCart') })
-    //s3.customerAddProductToCart(customer)
     customerAddProductToCart(s3, customer)
     sync({
         request: Event('end customerAddProductToCart'),
-        block: EventSet('', e => e.name == 'adminDeleteProduct' || e.name == 'checkoutEmptyCart' || e.name == 'checkout')
     })
 })
 
+/**
+ * this story opens a new browser window, goes to openCart admin site, logging in, search for the test product and deletes it from the shop.
+ */
 bthread("Admin deletes product", function() {
     let s2 = new SeleniumSession(AdminSession).start(adminPage)
     sync({request: Event('adminDeleteProduct') })
-    //s2.adminDeleteProduct(admin)
-    adminDeleteProduct(s2, admin)
-    sync({
-        request: Event('end adminDeleteProduct'),
-        block: Event('checkout')
+    interrupt(Event('End(adminDeleteProduct)'), function() {
+        adminDeleteProduct(s2, admin)
     })
-    sync({
-        request: Event('end checkoutEmptyCart'),
-        block: Event('checkout')
-    })
+    sync({request: Event('end adminDeleteProduct') })
 })
 
+/**
+ * this story opens a new browser window,logging in, goes to shopping cart and does checkout.
+ */
 bthread("Customer buying the product", function() {
-    let s4 = new SeleniumSession(customerSession2).start(mainPage)
-    sync({request: Event('checkout') })
-    checkout(s4, customer)
-    sync({request: Event('end checkout')})
+        let s4 = new SeleniumSession(customerChcekout).start(mainPage)
+        sync({request: Event('checkout') })
+        interrupt(Event('End(checkout)'), function() {
+            checkout(s4, customer)
+        })
+        sync({request: Event('end checkout')})
 })
 
+/**
+ * this story opens a new browser window,logging in, goes to shopping cart and tries do checkout where the cart is empty .
+ */
 bthread("Customer buying the product empty cart", function() {
-    let s4 = new SeleniumSession(customerSession2).start(mainPage)
-    sync({request: Event('checkoutEmptyCart') })
-    checkoutEmptyCart(s4, customer)
-    sync({request: Event('end checkoutEmptyCart')})
+    interrupt(Event('end checkout'), function() {
+        let s5 = new SeleniumSession(customerChcekoutEmpty).start(mainPage)
+        sync({request: Event('checkoutEmptyCart') })
+        checkoutEmptyCart(s5, customer)
+        sync({request: Event('end checkoutEmptyCart')})
+    })
 })
 
+/**
+ * this story ensure that firstly set-up story will ends
+ */
 bthread("wait for setup", function() {
     sync({
         waitFor: Event('end setup'),
-        //block: EventSet('', e => e.name == 'Start(adminDeleteProduct)')
         block: EventSet('', e => e.name == 'adminDeleteProduct' || e.name == 'customerAddProductToCart' || e.name == 'checkoutEmptyCart' || e.name == 'checkout')
     })
 })
 
+/**
+ *this story ensure that secondly add to cart story will ends.
+ */
 bthread("add to cart before checkoutEmptyCart and delete ", function() {
     sync({
         waitFor: Event('end customerAddProductToCart'),
@@ -74,7 +80,7 @@ bthread("add to cart before checkoutEmptyCart and delete ", function() {
 })
 
 /**
- * 
+ * this story ensure that checkout empty cart will happen only after delete happened
  */
 bthread("", function() {
     sync({
@@ -83,51 +89,17 @@ bthread("", function() {
     })
 })
 
-bthread("", function() {
-    sync({
-        waitFor: Event('adminDeleteProduct'),
-    })
-    sync({block: Event('checkout')})
+/**
+ * marking story
+ */
+bthread('mark adminDeleteProduct at', function(){ 
+    const endOfActions = EventSet("", e => e.name.startWith("end "))
+
+    let e = sync({endOfActions })
+
+    for(var count = 0; e.name != 'end adminDeleteProduct'; count++)
+        e = sync({ waitFor: endOfActions })
+
+    sync({ request: Ctrl.markEvent(`deleteAt${count}`) })
 })
 
-bthread("", function() {
-    sync({
-        waitFor: Event('chckout')
-    })
-    sync({
-        waitFor: Event('end checkout'),
-        block: Event('adminDeleteProduct')
-    })
-})
-
-// bthread("", function() {
-//     sync({
-//         waitFor: Event('end adminDeleteProduct'),
-//         block: Event('checkout')
-//     })
-// })
-
-// bthread("", function() {
-//     sync({
-//         request: [Event('adminDeleteProduct'), Event('checkout')]
-//     })
-// })
-
-// //1.wait for setup(admin adds test product to the shop"
-// bthread("delete before checkot ", function() {
-//     sync({
-//         waitFor: Event('end adminDeleteProduct'),
-//         block: EventSet('', e => e.name == 'checkoutEmptyCart')
-//     })
-// })
-
-
-
-//TODO:
-//1.assert in good runing path checkoutEmptyCart succeds
-//2.assert in the bad path checkoutEmptyCart fails
-
-//bthread("Hi Venus is a spec error", function(){
-//    waitFor(bp.Event("Hi, Venus"));
-//    bp.ASSERT(false, "Spec Error: Saying 'Hi' to Venus should not be possible");
-//});

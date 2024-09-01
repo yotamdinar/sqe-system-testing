@@ -1,414 +1,166 @@
 // @provengo summon ctrl
 // @provengo summon selenium
 
-//Define an event filter for start events in a session
-// const AnyStart = function (name) {
-//     return bp.EventSet("AnyStart", function (e) {
-//         return e.data !== null && e.data.hasOwnProperty('startEvent') && e.data.startEvent && e.data.name !== name //&& String(s).equals(e.data.session.name)
-//     })
-// }
-
-// defineAction = function (name, func) {
-//     // Add the new action to the SeleniumSession prototype
-//     SeleniumSession.prototype[name] = function (data) {
-//         let session = this;
-
-//         // Request a start event
-//         sync({ request: bp.Event(`Start(${name})`, { session: session, startEvent: true, parameters: data }) })
-
-//         // Block any other start events in the session while the function is executing
-//         block(AnyStart(this.name), function () {
-//             // Execute the function
-//             func(session, data)
-
-//         // Request an end event
-//         sync({ request: bp.Event(`End(${name})`, { session: session, endEvent: true, parameters: data }) })
-//         })
-//     }
-// }
-
-// function startAllSessions() {
-//     let sessions = {};
-//     sessions.s = new SeleniumSession(setupSession).start(adminPage)
-//     sessions.s2 = new SeleniumSession(AdminSession).start(adminPage)
-//     sessions.s3 = new SeleniumSession(customerSession).start(mainPage)
-//     return sessions
-// }
-
-// function adminAddProduct(session, admin){
-//     session.adminAddProduct(admin)
-// }
-
-// function adminDeleteProduct(session, admin){
-//     session.adminDeleteProduct(admin)
-// }
-
-// function customerAddProductToCart(session, admin){
-//     session.customerAddProductToCart(admin)
-// }
-
-// function checkout(session, admin){
-//     session.checkout(admin)
-// }
-
-function adminAddProduct(session, admin) {
-    sync({request: Event('Start(adminAddProduct)', {startEvent: true, session: session, parameters: admin})})
-
-    block(EventSet('', e => e.startEvent == true), function() {//[Event('Start(adminDeleteProduct)', Start(customerAddProductToCart)'])
-        //login admin
-        linger(0.5)
-        // Make the browser window go full screen
-        session.waitForVisibility(XPATHS.adminLoginUsernameInput)
-        session.writeText(XPATHS.adminLoginUsernameInput, admin.username); 
-        linger(0.5)
-        session.waitForVisibility(XPATHS.adminLoginPasswordInput)
-        session.writeText(XPATHS.adminLoginPasswordInput, admin.password);
-        
-        session.click(XPATHS.adminLoginButton); 
-        linger(0.5)
-        //enter products page
-        session.waitForVisibility(XPATHS.adminCatalogMenu)
-        session.click(XPATHS.adminCatalogMenu);
-        session.waitForVisibility(XPATHS.adminProducts)
-        session.click(XPATHS.adminProducts); 
-
-        //add new product
-        linger(0.5)
-        session.waitForVisibility(XPATHS.adminAddNew)
-        session.click(XPATHS.adminAddNew)
-
-        session.waitForVisibility(XPATHS.addNewNameInput)
-        session.writeText(XPATHS.addNewNameInput, testProduct.name)
-        linger(0.5)
-        session.writeText(XPATHS.addNewTagTitleInput, testProduct.tag)
-        linger(0.5)
-        session.click(XPATHS.addNewDataTab)
-        session.writeText(XPATHS.addNewModelInput, testProduct.model)
-        linger(0.5)
-        session.click(XPATHS.addNewSeoTab)
-        session.writeText(XPATHS.addNewSeoInput, testProduct.seo)
-        linger(0.5)
-        session.click(XPATHS.addNewSaveButton)
-        session.close()
-        sync({request: Event('End(adminAddProduct)', {endEvent: true, session: session, parameters: admin}) })
-    })
+function loginCustomer(session) {
+    session.click(XPATHS.myAccount);
+    session.click(XPATHS.login);
+    session.waitForVisibility(XPATHS.loginEmailInput);
+    session.writeText(XPATHS.loginEmailInput, customer.email);
+    session.waitForVisibility(XPATHS.loginPasswordInput);
+    session.writeText(XPATHS.loginPasswordInput, customer.password);
+    session.click(XPATHS.loginButton);
+    
 }
 
-function adminDeleteProduct(session, admin) {
-    sync({request: Event('Start(adminDeleteProduct)', {startEvent: true, session: session, parameters: admin})})
+function loginAdmin(session) {
+    session.waitForVisibility(XPATHS.adminLoginUsernameInput);
+    session.writeText(XPATHS.adminLoginUsernameInput, admin.username);
+    session.waitForVisibility(XPATHS.adminLoginPasswordInput);
+    session.writeText(XPATHS.adminLoginPasswordInput, admin.password);
+    session.click(XPATHS.adminLoginButton);
+}
 
-    block(EventSet('', e => e.startEvent == true), function() {
-        //login admin
-        linger(0.5)
-        linger(0.5)
-        session.waitForVisibility(XPATHS.adminLoginUsernameInput)
-        session.writeText(XPATHS.adminLoginUsernameInput, admin.username); 
-        session.waitForVisibility(XPATHS.adminLoginPasswordInput)
-        session.writeText(XPATHS.adminLoginPasswordInput, admin.password);
-        linger(0.5)
-        session.click(XPATHS.adminLoginButton); linger(0.5)
+function adminAddProduct(session) {
+    sync({ request: Event('Start(adminAddProduct)', { startEvent: true }) });
 
-        //enter products page
-        session.waitForVisibility(XPATHS.adminCatalogMenu)
+    block(EventSet('', e => typeof e.startEvent !== 'undefined' && e.startEvent === true), function () {
+
+        loginAdmin(session);
+
+        session.waitForVisibility(XPATHS.adminCatalogMenu);
         session.click(XPATHS.adminCatalogMenu);
-        linger(0.5)
-        session.waitForVisibility(XPATHS.adminProducts)
-        session.click(XPATHS.adminProducts); 
-        linger(0.5)
+        session.waitForVisibility(XPATHS.adminProducts);
+        session.click(XPATHS.adminProducts);
 
-        //remove test product
-        session.waitForVisibility(XPATHS.adminSearchInput)
+        session.waitForVisibility(XPATHS.adminAddNew);
+        session.click(XPATHS.adminAddNew);
+
+        session.waitForVisibility(XPATHS.addNewNameInput);
+        session.writeText(XPATHS.addNewNameInput, testProduct.name);
+        session.writeText(XPATHS.addNewTagTitleInput, testProduct.tag);
+        session.click(XPATHS.addNewDataTab);
+        session.writeText(XPATHS.addNewModelInput, testProduct.model);
+        session.click(XPATHS.addNewSeoTab);
+        session.writeText(XPATHS.addNewSeoInput, testProduct.seo);
+        session.click(XPATHS.addNewSaveButton);
+        session.close();
+
+        sync({ request: Event('End(adminAddProduct)', { endEvent: true }) });
+    });
+}
+
+function adminDeleteProduct(session) {
+    sync({ request: Event('Start(adminDeleteProduct)', { startEvent: true }) },
+
+    block(EventSet('', e => typeof e.startEvent !== 'undefined' && e.startEvent === true), function () {
+
+        loginAdmin(session);
+
+        session.waitForVisibility(XPATHS.adminCatalogMenu);
+        session.click(XPATHS.adminCatalogMenu);
+        linger(1);
+        session.waitForVisibility(XPATHS.adminProducts);
+        session.click(XPATHS.adminProducts);
+        linger(1);
+
+        session.waitForVisibility(XPATHS.adminSearchInput);
         session.writeText(XPATHS.adminSearchInput, 'new');
-        linger(0.5)
-        session.click(XPATHS.adminFilter)
-        linger(0.5)
-        session.waitForVisibility(XPATHS.adminTestProductChecbox)
+        linger(1);
+        session.click(XPATHS.adminFilter);
+        linger(1);
+        session.waitForVisibility(XPATHS.adminTestProductChecbox);
         session.click(XPATHS.adminTestProductChecbox);
-        linger(0.5)
-        session.waitForVisibility(XPATHS.adminRemoveButton)
-        session.click(XPATHS.adminRemoveButton);    
-        linger(0.5) 
-        linger(0.5)
-        session.acceptAlert(); // Accept the "Are you sure?" alert
-        linger(0.5)
+        linger(1);
+        session.waitForVisibility(XPATHS.adminRemoveButton);
+        session.click(XPATHS.adminRemoveButton);
+        linger(1);
+        sync({ request: Event('End(adminDeleteProduct)', { endEvent: true }) });
+        session.acceptAlert();
+        linger(1);
 
-        session.close()
-        sync({request: Event('End(adminDeleteProduct)', {endEvent: true, session: session, parameters: admin}) })
+        session.close();
     })
+)
 }
 
-function customerAddProductToCart(session, admin) {
-    sync({request: Event('Start(customerAddProductToCart)', {startEvent: true, session: session, parameters: admin})})
+function customerAddProductToCart(session) {
+    sync({ request: Event('Start(customerAddProductToCart)', { startEvent: true }) });
 
-    block(EventSet('', e => e.startEvent == true), function() {
-        //login
-        linger(0.5)
-        session.click(XPATHS.myAccount); 
-        linger(0.5)
-        session.click(XPATHS.login); 
-        session.waitForVisibility(XPATHS.loginEmailInput)
-        session.writeText(XPATHS.loginEmailInput, customer.email);   
-        linger(0.5)
-        session.waitForVisibility(XPATHS.loginPasswordInput)
-        session.writeText(XPATHS.loginPasswordInput, customer.password); 
-        linger(0.5)
-        session.click(XPATHS.loginButton); 
+    block(EventSet('', e => typeof e.startEvent !== 'undefined' && e.startEvent === true), function () {
 
-        //search
-        linger(0.5)
-        session.waitForVisibility(XPATHS.searchWindow)
-        session.writeText(XPATHS.searchWindow, testProduct.name) 
-        linger(0.5)
-        session.click(XPATHS.searchButton)
+        loginCustomer(session);
 
-        //add to cart
-        linger(0.5);
+        session.waitForVisibility(XPATHS.searchWindow);
+        session.writeText(XPATHS.searchWindow, testProduct.name);
+        session.click(XPATHS.searchButton);
 
-        session.waitForVisibility(XPATHS.addToCartTestProduct1)
-        session.moveToElement(XPATHS.addToCartTestProduct1)
-        session.click(XPATHS.addToCartTestProduct1)
-        // try {
-        //     session.click(XPATHS.addToCartTestProduct1); // Try the first XPath
-        //     linger(0.5);
-        // } catch (error) {
-        //     // If an error occurs (like element not found), try the second XPath
-        //     try {
-        //         session.click(XPATHS.addToCartTestProduct2); // Try the second XPath
-        //         linger(0.5);
-        //     } catch (error) {
-        //         console.log("Both XPaths failed to find the element.");
-        //     }
-        // }
-        //session.click(XPATHS.addToCartTestProduct);nger(3)
+        session.waitForVisibility(XPATHS.addToCartTestProduct1);
+        session.moveToElement(XPATHS.addToCartTestProduct1);
+        session.click(XPATHS.addToCartTestProduct1);
 
-        //assert test product is now in the shopping cart
-        linger(0.5)
-        linger(0.5)
-        session.close()
+        session.close();
 
-        sync({request: Event('End(customerAddProductToCart)', {endEvent: true, session: session, parameters: admin}) })
-    })
+        sync({ request: Event('End(customerAddProductToCart)', { endEvent: true }) });
+    });
 }
 
-function checkout(session, customer) {
-try{
-    sync({request: Event('Start(checkout)', {startEvent: true, session: session, parameters: customer})})
+function checkout(session) {
+    sync({ request: Event('Start(checkout)', { startEvent: true }) });
 
-    block(EventSet('', e => e.startEvent == true), function() {
-        //login
-        linger(0.5)
-        session.click(XPATHS.myAccount); 
-        linger(0.5)
-        session.click(XPATHS.login); 
-        session.waitForVisibility(XPATHS.loginEmailInput)
-        session.writeText(XPATHS.loginEmailInput, customer.email);    
-        linger(0.5)
+    block(EventSet('', e => typeof e.startEvent !== 'undefined' && e.startEvent === true), function () {
+        //interrupt(Event('end adminDeleteProduct'), function() {
 
-        session.waitForVisibility(XPATHS.loginPasswordInput)
-        session.writeText(XPATHS.loginPasswordInput, customer.password);
-        linger(0.5) 
-        session.click(XPATHS.loginButton); 
+            loginCustomer(session);
 
-        //my cRT
-        linger(0.5)
-        session.waitForVisibility(XPATHS.shoppingCart2)
+            linger(1);
+            session.waitForVisibility(XPATHS.shoppingCart2);
+            session.click(XPATHS.shoppingCart2);
+            session.click(XPATHS.checkout2);
+            linger(1);
+            session.click(XPATHS.chooseAddress);
+            linger(1);
+            session.click(XPATHS.chooseTestAdress);
+            linger(1);
+
+            session.click(XPATHS.shipping);
+            linger(1);
+            session.click(XPATHS.shippingcheckbox);
+            linger(1);
+            session.click(XPATHS.shippingContinue);
+            linger(1);
+
+            session.click(XPATHS.paymentMethod);
+            linger(1);
+            session.click(XPATHS.paymentCheckbox);
+            linger(1);
+            session.click(XPATHS.paymentContinue);
+            linger(1);
+            session.moveToElement(XPATHS.confirmOrder1);
+            sync({ request: Event('End(checkout)', { endEvent: true }) });
+            session.click(XPATHS.confirmOrder1);
+            session.close();
+
+       // })
+    });
+}
+
+function checkoutEmptyCart(session) {
+    sync({ request: Event('Start(checkoutEmptyCart)', { startEvent: true }) });
+
+    block(EventSet('', e => typeof e.startEvent !== 'undefined' && e.startEvent === true), function () {
+
+        loginCustomer(session);
+
+        linger(1);
+        session.waitForVisibility(XPATHS.shoppingCart2);
+        linger(1);
         session.click(XPATHS.shoppingCart2);
-        //session.waitForVisibility(XPATHS.checkout2)
-        // if (!session.waitForVisibility(XPATHS.checkout2, 5000)) {
-        //     console.log("Checkout button not found.");
-        //     throw new Error("Checkout button not found.");
-        //   }
+        linger(1);
 
-                // Attempt to wait for the visibility of the checkout button
-        try{
-            const isCheckoutVisible = session.waitForVisibility(XPATHS.checkout2, 5000);
-        }
-        catch(e){
-                throw new Error("Checkout button not found."); // Manually throw the error
-        }
-        
-        session.click(XPATHS.checkout2);linger(0.5)
-        session.click(XPATHS.chooseAddress);linger(0.5)
-        session.click(XPATHS.chooseTestAdress);linger(0.5)
-
-        session.click(XPATHS.shipping);linger(0.5)
-        session.click(XPATHS.shippingcheckbox);linger(0.5)
-        session.click(XPATHS.shippingContinue);linger(0.5)
-
-        session.click(XPATHS.paymentMethod);linger(0.5)
-        session.click(XPATHS.paymentCheckbox);linger(0.5)
-        session.click(XPATHS.paymentContinue);linger(0.5)
-        //session.click(XPATHS.confirmOrder);linger(0.5);linger(0.5)
-        session.moveToElement(XPATHS.confirmOrder1)
-        try {
-            session.click(XPATHS.confirmOrder1); // Try the first XPath
-            linger(0.5);
-        } catch (error) {
-            // If an error occurs (like element not found), try the second XPath
-            try {
-                session.click(XPATHS.confirmOrder2); // Try the second XPath
-                linger(0.5);
-            } catch (error) {
-                console.log("Both XPaths failed to find the element.");
-            }
-        }
-        session.close()
-
-        sync({request: Event('End(checkout)', {endEvent: true, session: session, parameters: customer}) })
-    })
-}
-catch(e){checkoutEmptyCart(session, customer)}
+        sync({ request: Event('End(checkoutEmptyCart)', { endEvent: true }) });
+    });
 }
 
-function checkoutEmptyCart(session, customer){
-    sync({request: Event('Start(checkoutEmptyCart)', {startEvent: true, session: session, parameters: customer})})
-
-    block(EventSet('', e => e.startEvent == true), function() {
-        //login
-        linger(0.5)
-        linger(0.5)
-        session.click(XPATHS.myAccount); 
-        session.click(XPATHS.login); 
-        linger(0.5)
-        session.waitForVisibility(XPATHS.loginEmailInput)
-        session.writeText(XPATHS.loginEmailInput, customer.email);    
-        session.waitForVisibility(XPATHS.loginPasswordInput)
-        session.writeText(XPATHS.loginPasswordInput, customer.password); 
-        linger(0.5)
-        session.click(XPATHS.loginButton); 
-
-        //my cart
-        linger(0.5)
-        session.waitForVisibility(XPATHS.shoppingCart2)
-        linger(0.5)
-        session.click(XPATHS.shoppingCart2);
-        linger(0.5)
-
-        //assert cart is now empty
-        //emptyCartTxt = session.getText(checkoutEmptyCart)
-        //assertEquals("Your shopping cart is empty!", emptyCartTxt, "ERROR: Cart is not empty");
-        linger(0.5)
-        linger(0.5)
-        linger(0.5)
-
-    sync({request: Event('End(checkoutEmptyCart)', {endEvent: true, session: session, parameters: customer}) })
-    
-    })
+function linger(seconds) {
+    Ctrl.doSleep(1000 * seconds);
 }
-
-function linger(seconds){
-    Ctrl.doSleep(1000*seconds)
-}
-
-
-
-
-
-///////////////////////////////////////////////////**************************************************************//////////////////////////////// */
-// defineAction('adminAddProduct', function(session, admin) {
-//     //login admin
-//     session.waitForVisibility(XPATHS.adminLoginUsernameInput)
-//     session.writeText(XPATHS.adminLoginUsernameInput, admin.username); 
-
-//     session.waitForVisibility(XPATHS.adminLoginPasswordInput)
-//     session.writeText(XPATHS.adminLoginPasswordInput, admin.password);
-    
-//     session.click(XPATHS.adminLoginButton); 
-
-//     //enter products page
-//     session.waitForVisibility(XPATHS.adminCatalogMenu)
-//     session.click(XPATHS.adminCatalogMenu);
-//     session.waitForVisibility(XPATHS.adminProducts)
-//     session.click(XPATHS.adminProducts); 
-
-//     //add new product
-//     session.waitForVisibility(XPATHS.adminAddNew)
-//     session.click(XPATHS.adminAddNew)
-
-//     session.waitForVisibility(XPATHS.addNewNameInput)
-//     session.writeText(XPATHS.addNewNameInput, testProduct.name)
-//     session.writeText(XPATHS.addNewTagTitleInput, testProduct.tag)
-//     session.click(XPATHS.addNewDataTab)
-//     session.writeText(XPATHS.addNewModelInput, testProduct.model)
-//     session.click(XPATHS.addNewSeoTab)
-//     session.writeText(XPATHS.addNewSeoInput, testProduct.seo)
-//     session.click(XPATHS.addNewSaveButton)
-// })
-
-// defineAction('adminDeleteProduct', function(session, admin) {
-//     //login admin
-//     session.waitForVisibility(XPATHS.adminLoginUsernameInput)
-//     session.writeText(XPATHS.adminLoginUsernameInput, admin.username); 
-//     session.waitForVisibility(XPATHS.adminLoginPasswordInput)
-//     session.writeText(XPATHS.adminLoginPasswordInput, admin.password);
-//     session.click(XPATHS.adminLoginButton); linger(0.5)
-
-//     //enter products page
-//     session.waitForVisibility(XPATHS.adminCatalogMenu)
-//     session.click(XPATHS.adminCatalogMenu);
-//     session.waitForVisibility(XPATHS.adminProducts)
-//     session.click(XPATHS.adminProducts); 
-//     linger(0.5)
-
-//     //remove test product
-//     session.waitForVisibility(XPATHS.adminSearchInput)
-//     session.writeText(XPATHS.adminSearchInput, 'new');
-//     session.click(XPATHS.adminFilter)
-//     session.waitForVisibility(XPATHS.adminTestProductChecbox)
-//     session.click(XPATHS.adminTestProductChecbox);
-//     session.click(XPATHS.adminRemoveButton);     
-//     session.acceptAlert(); // Accept the "Are you sure?" alert
-//     linger(0.5)
-// })
-
-// defineAction('customerAddProductToCart', function(session, customer) {
-//     //login
-//     session.click(XPATHS.myAccount); 
-//     session.click(XPATHS.login); 
-//     session.waitForVisibility(XPATHS.loginEmailInput)
-//     session.writeText(XPATHS.loginEmailInput, customer.email);    
-//     session.waitForVisibility(XPATHS.loginPasswordInput)
-//     session.writeText(XPATHS.loginPasswordInput, customer.password); 
-//     session.click(XPATHS.loginButton); 
-
-//     //search
-//     session.waitForVisibility(XPATHS.searchWindow)
-//     session.writeText(XPATHS.searchWindow, testProduct.name) 
-//     session.click(XPATHS.searchButton); 
-
-//     //add to cart
-//     linger(0.5)
-//     session.waitForVisibility(XPATHS.addToCartTestProduct)
-//     linger(0.5)
-//     session.click(XPATHS.addToCartTestProduct); linger(0.5);linger(0.5)
-// })
-
-// defineAction('checkout', function(session, customer) {
-//     //login
-//     session.click(XPATHS.myAccount); 
-//     session.click(XPATHS.login); 
-//     session.waitForVisibility(XPATHS.loginEmailInput)
-//     session.writeText(XPATHS.loginEmailInput, customer.email);    
-//     session.waitForVisibility(XPATHS.loginPasswordInput)
-//     session.writeText(XPATHS.loginPasswordInput, customer.password); 
-//     session.click(XPATHS.loginButton); 
-
-//     //my cRT
-//     linger(0.5)
-//     session.waitForVisibility(XPATHS.shoppingCart2)
-//     session.click(XPATHS.shoppingCart2);
-//     session.waitForVisibility(XPATHS.checkout2)
-//     session.click(XPATHS.checkout2);linger(0.5)
-//     session.click(XPATHS.chooseAddress);linger(0.5)
-//     session.click(XPATHS.chooseTestAdress);linger(0.5)
-
-//     session.click(XPATHS.shipping);linger(0.5)
-//     session.click(XPATHS.shippingcheckbox);linger(0.5)
-//     session.click(XPATHS.shippingContinue);linger(0.5)
-
-//     session.click(XPATHS.paymentMethod);linger(0.5)
-//     session.click(XPATHS.paymentCheckbox);linger(0.5)
-//     session.click(XPATHS.paymentContinue);linger(0.5)
-//     session.waitForVisibility(XPATHS.confirmOrder);linger(0.5);
-//     session.click(XPATHS.confirmOrder);linger(0.5);linger(0.5)
-// })
